@@ -1,4 +1,4 @@
-package tensor
+package estructuraT
 
 import (
 	"fmt"
@@ -13,12 +13,12 @@ type Dimension struct {
 	MultiDimensional []Dimension
 }
 
-type Tensor struct {
+type StructT struct {
 	Shape      []int64
-	DataTensor []Dimension
+	DataStruct []Dimension
 }
 
-func (t *Tensor) DataInit(dataIni interface{}) {
+func (t *StructT) SetData(dataIni interface{}) {
 	shapeLen := len(t.Shape)
 	var data []Dimension
 	//for i := 0; i < shapeLen; i++ {
@@ -31,13 +31,12 @@ func (t *Tensor) DataInit(dataIni interface{}) {
 			return
 		}
 	}
-	data = createDataTensor(0, t.Shape, shapeLen, &elements, &index)
-	t.DataTensor = data
-	fmt.Println("Datos del Tensor", t)
+	data = createData(0, t.Shape, shapeLen, &elements, &index)
+	t.DataStruct = data
 
 }
 
-func createDataTensor(dimen int, shapeValue []int64, shapeLen int, elements *[]float32, index *int) []Dimension {
+func createData(dimen int, shapeValue []int64, shapeLen int, elements *[]float32, index *int) []Dimension {
 
 	//    if(data==nil){
 	data := make([]Dimension, shapeValue[dimen])
@@ -47,14 +46,14 @@ func createDataTensor(dimen int, shapeValue []int64, shapeLen int, elements *[]f
 		var dataDimen Dimension
 		if dimen == (shapeLen - 1) {
 
-			if elements == nil {
+			if len(*elements) == 0 {
 				dataDimen.Data = rand.Float32() * 5
 			} else {
 				dataDimen.Data = (*elements)[*index]
 				*index++
 			}
 		} else {
-			dataDimen.MultiDimensional = createDataTensor(dimen+1, shapeValue, shapeLen, elements, index)
+			dataDimen.MultiDimensional = createData(dimen+1, shapeValue, shapeLen, elements, index)
 		}
 		dataDimen.Dimen = dimen + 1
 		data[j] = dataDimen
@@ -64,74 +63,88 @@ func createDataTensor(dimen int, shapeValue []int64, shapeLen int, elements *[]f
 	return data
 }
 
-func (t *Tensor) Reshape(newShape []int64) Tensor {
+func (t *StructT) Reshape(newShape []int64) StructT {
 	numElem := numElements(t.Shape)
 	elements := make([]float32, numElem)
-	var tensorResult Tensor
+	var tensorResult StructT
 	if numElem != numElements(newShape) {
 		fmt.Println("Nuevo Tamaños incompatibles", t.Shape, newShape)
 		return tensorResult
 	} else {
 		shapeLen := len(t.Shape)
 		var index int = 0
-		setElementsFromOriginalTensor(0, &index, t.DataTensor, shapeLen, elements)
-		//fmt.Println("Nuevo Tamaños elements", elements)
+		setElementsFromOriginalTensor(0, &index, t.DataStruct, shapeLen, elements)
+		shapeLen = len(newShape)
 		index = 0
-		data := createDataTensor(0, t.Shape, shapeLen, &elements, &index)
-		tensorResult.Shape = t.Shape
-		tensorResult.DataTensor = data
-		fmt.Println("Nuevo Tensor elements", tensorResult)
+		data := createData(0, newShape, shapeLen, &elements, &index)
+		tensorResult.Shape = newShape
+		tensorResult.DataStruct = data
 	}
 	return tensorResult
 }
 
-func (t *Tensor) IndexSelect(dimen int, indexVector []int64) Tensor {
-	shapeLen := len(t.Shape)
-	var index int = 0
-	outPutShape := t.Shape
-	outPutShape[dimen] = int64(len(indexVector))
-	numElem := numElements(outPutShape)
-	elements := make([]float32, numElem)
-	setElementsFromOTandIndexV(0, &index, t.DataTensor, shapeLen, elements, indexVector, dimen)
-	index = 0
-	data := createDataTensor(0, t.Shape, shapeLen, &elements, &index)
-	var out Tensor
-	out.DataTensor = data
-	out.Shape = outPutShape
-	fmt.Println("Selected index REsult", out)
+func (t *StructT) IndexSelect(dimen int, indexVector []int64) StructT {
+	var out StructT
+	if VerificarIndex(t.Shape, indexVector) {
+		shapeLen := len(t.Shape)
+		var index int = 0
+		outPutShape := t.Shape
+		outPutShape[dimen] = int64(len(indexVector))
+		numElem := numElements(outPutShape)
+		elements := make([]float32, numElem)
+		setElementsFromOTandIndexV(0, &index, t.DataStruct, shapeLen, elements, indexVector, dimen)
+		index = 0
+		data := createData(0, t.Shape, shapeLen, &elements, &index)
+
+		out.DataStruct = data
+		out.Shape = outPutShape
+	}
 	return out
 
 }
 
-func (t *Tensor) HadamardProduct(tensorA, tensorB Tensor) Tensor {
-	var out Tensor
+func VerificarIndex(shape, indexVector []int64) bool {
+	result := true
+	for i, value := range indexVector {
+		for j, v := range shape {
+			if value >= v {
+				result = false
+				fmt.Printf("Indice del Vector de Logitud %d en posision %d debe ser menor a Longitud %d em posicion %d del Shape \n", value, i, v, j)
+			}
+		}
+	}
+	return result
+}
+
+func (t *StructT) HadamardProduct(tensorA, tensorB StructT) StructT {
+	var out StructT
 	if testEq(tensorA.Shape, tensorB.Shape) {
 		shapeLen := len(t.Shape)
 		numElem := numElements(t.Shape)
 		elements := make([]float32, numElem)
 		var index int = 0
 
-		setElementsFromHandmardO(0, &index, tensorA.DataTensor, tensorB.DataTensor, shapeLen, elements)
+		setElementsFromHandmardO(0, &index, tensorA.DataStruct, tensorB.DataStruct, shapeLen, elements)
 		index = 0
-		data := createDataTensor(0, t.Shape, shapeLen, &elements, &index)
+		data := createData(0, t.Shape, shapeLen, &elements, &index)
 
-		out.DataTensor = data
+		out.DataStruct = data
 		out.Shape = tensorA.Shape
-		fmt.Println("Hadmard Result", out)
+
 	}
 	return out
 
 }
 
-func (t Tensor) String() string {
+func (t StructT) String() string {
 
 	//shapeLen := len(t.Shape)
 	//toString := fmt.Sprintln("Dim:", shapeLen)
 	toString := fmt.Sprintln("Shape:", t.Shape)
 	toString += "["
-	for dim := range t.DataTensor {
+	for dim := range t.DataStruct {
 
-		toString = getString(1, t.DataTensor[dim], toString)
+		toString = getString(1, t.DataStruct[dim], toString)
 
 	}
 	toString += "]"

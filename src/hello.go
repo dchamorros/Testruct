@@ -2,102 +2,139 @@ package main
 
 import (
 	"fmt"
-	tensor "hello/src/tensor"
-	"reflect"
+	t "hello/src/estructuraT"
 )
 
-func intScanln(n int) ([]int, error) {
-	x := make([]int, n)
-	y := make([]interface{}, len(x))
-	for i := range x {
-		y[i] = &x[i]
-	}
-	n, err := fmt.Scanln(y...)
-	x = x[:n]
-	return x, err
-}
-
 func main() {
-	//var numDimen int
-	fmt.Println("Ingreso el entero que represnta el numero de las dimensiones del tensor : ")
-	//fmt.Scanln(&numDimen)
-	//rows = 4
 
-	//colums = 4
-	fmt.Println("Ingreso los tamaños para cada dimencion: ")
-	shape := []int64{3, 3, 3}
-	var mytensor tensor.Tensor
+	//Ejemplo de uso de la fución reshape en 1 dimensión
+	//sampleReShape1D()
+	//sampleReShape2D()
+	//sampleReShapeND()
+	//sampleIndexSelectN()
+	sampleHadamard2X2()
+	sampleHadamardND()
+
+}
+
+// Permite verificar el funcionamiento del la funcion RashSahpe para un T de una dimension
+func sampleReShape1D() {
+
+	shape := []int64{2}
+	data := []int{1, 2}
+	var myStructT t.StructT
+	myStructT.Shape = shape
+	myStructT.SetData(data)
+	fmt.Println("Tensor Creado:", myStructT)
+	newShape := []int64{2, 1}
+	fmt.Println("Aplicando ReShape:", newShape)
+	myStructT.Reshape(newShape)
+	fmt.Println("Tensor Creado:", myStructT.Reshape(newShape))
+
+}
+
+func sampleReShape2D() {
+
+	shape := []int64{3, 2}
+	data := [][]float32{{2, 3}, {4, 5}, {6, 7}}
+	var mytensor t.StructT
 	mytensor.Shape = shape
-	data := [][]int{{2, 2}, {3, 4}}
-	mytensor.DataInit(data)
-	// shape, err := intScanln(numDimen)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// }
-
-	//IndexSelect([1, 2, 3, 4], 0, [0, 0, 2])[1, 1, 3]
-
-	//1. IndexSelect([[1, 2], [3, 4]], 0, [0])    			[[1, 2]]
-	//2. IndexSelect([[1, 2], [3, 4]], 0, [0, 0])			[[1, 2], [1, 2]]
-	//3. IndexSelect([[1, 2], [3, 4]], 0, [0, 0, 1, 1])	[[1, 2], [1, 2], [3, 4], [3, 4]]
-	//4. IndexSelect([[1, 2], [3, 4]], 1, [0])				[[1], [3]]
-	//5. IndexSelect([[1, 2], [3, 4]], 1, [0, 0])			[[1, 1], [3, 3]]
-	//6. IndexSelect([[1, 2], [3, 4]], 1, [0, 0, 1, 1])	[[1, 1, 2, 2], [3, 3, 4, 4]]
-	//shape := []int64{3, 3, 3} //  1. {1,2} -->[[1, 2]]2 repreesnta al ultimo de cada shape y el primero representa el tamoño de index
-
-	// fmt.Println("shapes")
-	// fmt.Println(shapes)
-	// //selecDimen := 0S
-	// //indexVector := []int{0, 0, 2}
-	// mytensor.Shape = shape
-	// mytensor.DataInit()
-
-	// var mytensorB tensor.Tensor
-	// mytensorB.Shape = shape
-	// mytensorB.DataInit()
-
-	// mytensor.HadamardProduct(mytensor, mytensorB)
-	// //dim := 0
-	// //indexVector := []int64{0}
-	// //mytensor.IndexSelect(dim, indexVector)
-	// //indexVector = []int64{0, 0}
-	// //mytensor.IndexSelect(dim, indexVector)
-	// //indexVector = []int64{0, 1, 0, 1}
-	// //mytensor.IndexSelect(dim, indexVector)
-	// //fmt.Scanln(&colums)
-
-	// // matrix := initMatrix(rows, colums)
-	// fmt.Println("matrix1:", matrix)
-	// matrix = populateRandomValues(matrix)
-	// fmt.Println("matrix1:", matrix)
-	// matrix = tensorReshape(matrix, 8, 2)
-	// fmt.Println("matrix1:", matrix)
-	//	initData(shapes)
+	mytensor.SetData(data)
+	fmt.Println("Tensor Creado:", mytensor)
+	newShape := []int64{2, 1, 3}
+	fmt.Println("Aplicando RaShape:", newShape)
+	mytensor.Reshape(newShape)
+	fmt.Println("Tensor Creado:", mytensor.Reshape(newShape))
 
 }
 
-type Number interface {
+// Ejemplo de un T de 4 Dimensiones inicializada con auto generacion datos aleatorios al pasar el parametro nul en los Datos
+func sampleReShapeND() {
+
+	shape := []int64{3, 2, 1, 4}
+
+	var myStructT t.StructT
+	myStructT.Shape = shape
+	myStructT.SetData(nil)
+	fmt.Println("Estructura creada:", myStructT)
+	newShape := []int64{4, 2, 1, 3}
+	fmt.Println("Aplicando RaShape:", newShape)
+	fmt.Println("Estructura Resultado:", myStructT.Reshape(newShape))
+
 }
 
-func initData(n Number) {
+// Ejemplo //1. IndexSelect([[1, 2], [3, 4]], 0, [0])    			[[1, 2]]
+func sampleIndexSelect1() {
+	shape := []int64{2, 2}
+	data := [][]int{{1, 2}, {3, 4}}
+	dim := 0
+	indexVector := []int64{0, 0}
+	var myStructT t.StructT
+	myStructT.Shape = shape
+	myStructT.SetData(data)
+	fmt.Println("Estructura Creada:", myStructT)
+	fmt.Println("Aplicando IndexSelect:", indexVector)
+	fmt.Println("Estructura Resultado:", myStructT.IndexSelect(dim, indexVector))
 
-	switch reflect.TypeOf(n).Kind() {
-	case reflect.Slice, reflect.Array:
-		s := reflect.ValueOf(n)
-		for i := 0; i < s.Len(); i++ {
-			fmt.Println(s.Index(i))
-		}
-	}
-
-	fmt.Println("Hadmard Result", reflect.TypeOf(n))
 }
 
-func initMatrix(rows, colums int) [][]float32 {
-	matrix := make([][]float32, rows)
-	for i := range matrix {
-		matrix[i] = make([]float32, colums)
-	}
+// //4. IndexSelect([[1, 2], [3, 4]], 1, [0])
+func sampleIndexSelect4() {
+	shape := []int64{2, 2}
+	data := [][]int{{1, 2}, {3, 4}}
+	dim := 1
+	indexVector := []int64{0}
+	var myStructT t.StructT
+	myStructT.Shape = shape
+	myStructT.SetData(data)
+	fmt.Println("Estructura Creada:", myStructT)
+	fmt.Println("Aplicando IndexSelect:", indexVector)
+	fmt.Println("Estructura Resultado:", myStructT.IndexSelect(dim, indexVector))
 
-	return matrix
+}
+
+// Ejemplo de una T con 4 Dimensiones generado aletoreamente
+func sampleIndexSelectN() {
+	shape := []int64{3, 3, 2, 2}
+
+	dim := 3
+	indexVector := []int64{0, 1, 1, 0, 1}
+	var myStructT t.StructT
+	myStructT.Shape = shape
+	myStructT.SetData(nil)
+	fmt.Println("Estructura Creado:", myStructT)
+	fmt.Println("Aplicando IndexSelect:", indexVector)
+	fmt.Println("Estructura Resultado:", myStructT.IndexSelect(dim, indexVector))
+
+}
+
+func sampleHadamard2X2() {
+	shape := []int64{2, 2}
+	dataA := [][]int{{1, 2}, {3, 4}}
+	dataB := [][]int{{2, 2}, {4, 4}}
+	var myStructA t.StructT
+	myStructA.Shape = shape
+	myStructA.SetData(dataA)
+	fmt.Println("Estructura A Creada:", myStructA)
+	var myStructB t.StructT
+	myStructB.Shape = shape
+	myStructB.SetData(dataB)
+	fmt.Println("Estructura A Creada:", myStructA)
+	fmt.Println("Estructura Resultado:", myStructA.HadamardProduct(myStructA, myStructB))
+
+}
+
+func sampleHadamardND() {
+	shape := []int64{2, 2, 3, 1}
+
+	var myStructA t.StructT
+	myStructA.Shape = shape
+	myStructA.SetData(nil)
+	fmt.Println("Estructura A Creada:", myStructA)
+	var myStructB t.StructT
+	myStructB.Shape = shape
+	myStructB.SetData(nil)
+	fmt.Println("Estructura A Creada:", myStructA)
+	fmt.Println("Estructura Resultado:", myStructA.HadamardProduct(myStructA, myStructB))
+
 }

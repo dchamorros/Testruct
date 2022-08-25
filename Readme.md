@@ -26,15 +26,16 @@
 <br />
 <div align="center">
   <a href="https://github.com/github_username/repo_name">
-    <img src="https://media-exp1.licdn.com/dms/image/C4D03AQH1JqgkmtKaGQ/profile-displayphoto-shrink_400_400/0/1652769363911?e=1666828800&v=beta&t=rCNN50kn48BIvZKP8kOwPLQlXG0r-Ma719obDR9qx2s" alt="Logo" width="80" height="80">
+    <img src="https://pbs.twimg.com/profile_images/1524162331294543874/ikWkgx1g_400x400.jpg" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">PRUEBA DIEGO CHAMORRO</h3>
 
   <p align="center">
     Mi reto de aprendizaje.
+    <br />Aspirante al cargo: Senior Software Engineer - Tech Lead.
     <br />
-    <a href="https://github.com/dchamorros/Testruct"><strong>Explore »</strong></a>
+    <a href="https://github.com/dchamorros/Testruct"><strong>Explorar proyecto »</strong></a>
     <!-- <br />
     <br />
     <a href="https://github.com/github_username/repo_name">View Demo</a>
@@ -49,7 +50,7 @@
 
 <!-- TABLE OF CONTENTS -->
 <details>
-  <summary>Table of Contents</summary>
+  <summary>Tabla de Contenido</summary>
   <ol>
     <li>
       <a href="#about-the-project">About The Project</a>
@@ -78,117 +79,166 @@
 <!-- ABOUT THE PROJECT -->
 ## Acerca del Proyecto
 
-Esta es una implementacion de un estructura T N Dimensional de float 32 que tiene implementado las operaciones: `Reshape`, `Hadamard Product`, `Index Select`,
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+Esta es una implementacion de un estructura T, de forma N Dimensional con valores float 32, sobre la cual se tiene implementado las operaciones: `Reshape`, `Hadamard Product`, `Index Select`
 
 
+<p align="right">(<a href="#readme-top">Ir arriba</a>)</p>
 
-### Built With
+
+
+### Desarrollado con
 
 * GO
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+### Nota
+
+* Este proyecto corresponde a mi primera implementación en Go. Y puedo decir que me pareció facil de aprender.
+
+<p align="right">(<a href="#readme-top">Ir arriba</a>)</p>
 
 
 
 <!-- GETTING STARTED -->
 ## Como Empezar
 
-Este es un ejemplo como tu debes empezar para ejecutar este proyecto.
-To get a local copy up and running follow these simple example steps.
+Para ejecutar este proyecto, primero ten una copia local y corre los ejemplos, siguiendos los pasos a continuación:
 
-### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+### Instalación
+
+1. Conectarse a [https://github.com/dchamorros/Testruct.git](https://github.com/dchamorros/Testruct.git)
+2. Clonar the repositorio
    ```sh
-   git clone https://github.com/github_username/repo_name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
+   git clone https://github.com/dchamorros/Testruct.git
    ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">Ir arriba</a>)</p>
 
 
 
 <!-- USAGE EXAMPLES -->
-## Usage
+## Uso
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+La implementación de las funciones incluye métodos para hacer las respectivas pruebas. Sin embargo, antes de usar los ejemplos, es necesario entender cómo funciona la estructura T.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+### shape
+Es un array de enteros que representa las dimensiones de la estructura T.
+ 
+ `Ejemplo 1 Dimensión:`
+   ```sh
+   shape := []int64{2}
+   ```
+   En este caso, el shape indica que la estructura T va a ser de 1 dimensión dado que el arreglo tiene logitud 1, e indica que en esa dimensión habrá un array con 2 elementos.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+   `Ejemplo N Dimensiones:`
+  ```sh
+   shape := []int64{3, 2, 1, 4}
+   ```
+   En este caso, el shape indica que la estructura T va a ser de 4 dimensiones dado que el arreglo tiene logitud 4, e indica que:
+   - En la cuarta dimensión habrá un array con 4 elementos de tipo float. 
+   - En la dimesión 3 habrá un array con 1 elemento.
+   - En la dimension 2 habrá un array con 2 elementos.
+   - Y, en la dimensión 1 habrá un array con 3 elementos.
 
+### datos
+Hay 2 formas de suministrarle datos a la estructura T:
 
+- Generación aleatoria de valores
+- Fijándo valores
 
-<!-- ROADMAP -->
-## Roadmap
-
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
-
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- CONTRIBUTING -->
-## Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+ 
+ `Ejemplo  Generación aleatoria de Valores:`
+   ```sh
+   var myStructT t.StructT
+	myStructT.Shape = shape
+	myStructT.SetData(nil)
+   ```
+   Si desea que el sistema genere valores aleatorios para la estructura definida anteriorme se le deberá pasar un valor `nil` en la inicialización de la data.
 
 
+   `Ejemplo Fijándo valores:`
+   ```sh
+    data := [][]int{{1, 2}, {3, 4}}
 
-<!-- LICENSE -->
-## License
+    var myStructT t.StructT
+	myStructT.Shape = shape
+	myStructT.SetData(data)
+   ```
+   Si desea que fijar sus propios valores a la estructura definida anteriorme se le deberá pasar un valor `data` en la inicialización de la data de cada uno de los ejemplos.
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+### operaciones
+- hadamard
+
+   ```sh
+    shape := []int64{2, 2}
+	dataA := [][]int{{1, 2}, {3, 4}}
+	dataB := [][]int{{2, 2}, {4, 4}}
+	
+    var myStructA t.StructT
+	myStructA.Shape = shape
+	myStructA.SetData(dataA)
+	
+	var myStructB t.StructT
+	myStructB.Shape = shape
+	myStructB.SetData(dataB)
+	
+	fmt.Println("Estructura Resultado:", myStructA.HadamardProduct(myStructA, myStructB))
+   ```
+    `ejemplos disponibles:`
+    1. sampleHadamard2X2()
+    2. sampleHadamardND()
+
+- reshape
+
+   ```sh
+   newShape := []int64{2, 1}
+	fmt.Println("Aplicando ReShape:", newShape)
+	myStructT.Reshape(newShape)
+   ```
+   Dentro de las funciones de ejemplo que se encuentran en el código, deberá definirse un newShape con las dimensiones de la estructura resultante de la operación, considerando que debe mantener la misma cantidad de elementos para que la operación pueda darse.
+
+   `ejemplos disponible:`
+    1. sampleReShape1D()
+    2. sampleReShape2D()
+    3. sampleReShapeND()
+
+
+- indexSelec
+
+   ```sh
+    dim := 1
+	indexVector := []int64{0}
+	var myStructT t.StructT
+	myStructT.Shape = shape
+	myStructT.SetData(data)
+	fmt.Println("Estructura Resultado:", myStructT.IndexSelect(dim, indexVector))
+   ```
+En cada una de las funciones de ejemplo de la operacion indexSelect que desee probar, se debe:
+1. Definir la dimensión desde la cual se tomarán los datos en el atributo `dim`.
+2. Definir el vector de indices en el atributo `indexVector`, especiaficandose los indices que se desean considerar en la operación.
+3. Fijarle a la estructura `myStructT` la data previamente definida.
+4. Llamar la función indexSelect de la estructura `myStructT` pasandole los parametros: `dim` e `indexVector`.
+
+`Ejemplos disponibles:`
+
+Para hacer uso de las funciones `indexSelect` abra el archivo hello.go ubicado en la carpeta src. Aquí encontrará la siguiente lista de ejemplos:
+
+1. sampleIndexSelect1()
+2. sampleIndexSelect4()
+3. sampleIndexSelectN()
+
 
 
 
 <!-- CONTACT -->
-## Contact
+## Contacto
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
+Diego Chamorro Salas - [@dchamorros](https://twitter.com/dchamorros) - dchamorros@gmail.com
 
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#readme-top">Ir arriba</a>)</p>
 
 
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-* []()
-* []()
-* []()
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 

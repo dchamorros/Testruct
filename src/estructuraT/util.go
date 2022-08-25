@@ -1,4 +1,6 @@
-package tensor
+package estructuraT
+
+import "fmt"
 
 func testEq(a, b []int64) bool {
 	if len(a) != len(b) {
@@ -36,4 +38,15 @@ func addSpace(toString string) string {
 		}
 	}
 	return toString
+}
+
+func intScanln(n int) ([]int, error) {
+	x := make([]int, n)
+	y := make([]interface{}, len(x))
+	for i := range x {
+		y[i] = &x[i]
+	}
+	n, err := fmt.Scanln(y...)
+	x = x[:n]
+	return x, err
 }
