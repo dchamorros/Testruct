@@ -3,60 +3,107 @@ package tensor
 import (
 	"fmt"
 	"math/rand"
-	"strconv"
-	"strings"
+	"reflect"
 )
 
-type Dimension struct {
-	Dimen            int
-	Data             float32
-	MultiDimensional []Dimension
+type DataNXM interface {
 }
 
-type Tensor struct {
+// func (v *vector) populateRandomValues(matrix []float32) [][]float32 {
+// 	rows := len(matrix)
+// 	for i := 0; i < rows; i++ {
+// 		v.data[i] = rand.Float32() * 5
+
+// 	}
+// 	return matrix
+// }
+
+type Tensor2 struct {
 	Shape      []int64
-	DataTensor []Dimension
+	DataTensor interface{}
 }
 
-func (t *Tensor) DataInit(dataIni interface{}) {
+func (t *Tensor2) DataInit(nm interface{}) {
 	shapeLen := len(t.Shape)
-	var data []Dimension
+	var data DataNXM
 	//for i := 0; i < shapeLen; i++ {
 	var index int = 0
-	var elements []float32
-	if dataIni != nil {
-		elements = getInitialElements(dataIni)
-		if numElements(t.Shape) != int64(len(elements)) {
-			fmt.Println("Datos Iniciales no concuerdan con las dimensiones", t)
-			return
-		}
+	if nm == nil {
+		data = getDimenShape2(0, t.Shape, shapeLen, nil, &index)
+		fmt.Println("Datos del Tensor", data)
 	}
-	data = createDataTensor(0, t.Shape, shapeLen, &elements, &index)
-	t.DataTensor = data
+	t.DataTensor = nm
 	fmt.Println("Datos del Tensor", t)
 
 }
 
-func createDataTensor(dimen int, shapeValue []int64, shapeLen int, elements *[]float32, index *int) []Dimension {
+func (t Tensor2) String() string {
 
+	//shapeLen := len(t.Shape)
+	//toString := fmt.Sprintln("Dim:", shapeLen)
+	toString := fmt.Sprintln("Shape:", t.Shape)
+	toString += "["
+
+	data := reflect.ValueOf(t.DataTensor)
+
+	//data_i := reflect.ValueOf(data)
+	//ko := reflect.TypeOf(data).Kind()
+	//ms+:fmt.Sprint(ko, data)
+	for i := 0; i < data.Len(); i++ {
+		toString = getString2(1, data.Index(i), toString)
+	}
+
+	toString += "]"
+	return toString
+}
+
+func getString2(dim int, data reflect.Value, toString string) string {
+	//+=toString = addSalto(toString)
+	if reflect.TypeOf(data).Kind() != reflect.Float32 {
+		toString = addSalto(dim, toString)
+		toString += "["
+		data_i := reflect.ValueOf(data)
+		ko := reflect.TypeOf(data_i).Kind()
+		fmt.Println(ko, data_i, data)
+
+		for i := 0; i < data_i.Len(); i++ {
+			toString = getString2(1, data_i.Index(i), toString)
+		}
+		toString += "]"
+	} else {
+		toString = addSpace(toString)
+		toString += fmt.Sprintf("%1.2f", reflect.ValueOf(data))
+	}
+	return toString
+}
+
+func getDimenShape2(dimen int, shapeValue []int64, shapeLen int, elements *[]float32, index *int) []DataNXM {
+
+	// switch reflect.TypeOf(n).Kind() {
+	// case reflect.Slice, reflect.Array:
+	// 	s := reflect.ValueOf(n)
+	// 	for i := 0; i < s.Len(); i++ {
+	// 		fmt.Println(s.Index(i))
+	// 	}
+	// }
 	//    if(data==nil){
-	data := make([]Dimension, shapeValue[dimen])
+	data := make([]DataNXM, shapeValue[dimen])
 	//}
 	//vector
 	for j := range data {
-		var dataDimen Dimension
+		var dataDimen DataNXM
 		if dimen == (shapeLen - 1) {
 
 			if elements == nil {
-				dataDimen.Data = rand.Float32() * 5
+				dataDimen = rand.Float32() * 5
 			} else {
-				dataDimen.Data = (*elements)[*index]
+				dataDimen = (*elements)[*index]
 				*index++
 			}
 		} else {
-			dataDimen.MultiDimensional = createDataTensor(dimen+1, shapeValue, shapeLen, elements, index)
+			dataDimen = getDimenShape2(dimen+1, shapeValue, shapeLen, elements, index)
 		}
-		dataDimen.Dimen = dimen + 1
+
 		data[j] = dataDimen
 
 	}
@@ -64,7 +111,7 @@ func createDataTensor(dimen int, shapeValue []int64, shapeLen int, elements *[]f
 	return data
 }
 
-func (t *Tensor) Reshape(newShape []int64) Tensor {
+/* func (t *Tensor) Reshape(newShape []int64) Tensor {
 	numElem := numElements(t.Shape)
 	elements := make([]float32, numElem)
 	var tensorResult Tensor
@@ -77,7 +124,7 @@ func (t *Tensor) Reshape(newShape []int64) Tensor {
 		setElementsFromOriginalTensor(0, &index, t.DataTensor, shapeLen, elements)
 		//fmt.Println("Nuevo Tamaños elements", elements)
 		index = 0
-		data := createDataTensor(0, t.Shape, shapeLen, &elements, &index)
+		data := getDimenShape(0, t.Shape, shapeLen, &elements, &index)
 		tensorResult.Shape = t.Shape
 		tensorResult.DataTensor = data
 		fmt.Println("Nuevo Tensor elements", tensorResult)
@@ -94,7 +141,7 @@ func (t *Tensor) IndexSelect(dimen int, indexVector []int64) Tensor {
 	elements := make([]float32, numElem)
 	setElementsFromOTandIndexV(0, &index, t.DataTensor, shapeLen, elements, indexVector, dimen)
 	index = 0
-	data := createDataTensor(0, t.Shape, shapeLen, &elements, &index)
+	data := getDimenShape(0, t.Shape, shapeLen, &elements, &index)
 	var out Tensor
 	out.DataTensor = data
 	out.Shape = outPutShape
@@ -113,7 +160,7 @@ func (t *Tensor) HadamardProduct(tensorA, tensorB Tensor) Tensor {
 
 		setElementsFromHandmardO(0, &index, tensorA.DataTensor, tensorB.DataTensor, shapeLen, elements)
 		index = 0
-		data := createDataTensor(0, t.Shape, shapeLen, &elements, &index)
+		data := getDimenShape(0, t.Shape, shapeLen, &elements, &index)
 
 		out.DataTensor = data
 		out.Shape = tensorA.Shape
@@ -121,6 +168,18 @@ func (t *Tensor) HadamardProduct(tensorA, tensorB Tensor) Tensor {
 	}
 	return out
 
+}
+
+func testEq(a, b []int64) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func (t Tensor) String() string {
@@ -138,26 +197,6 @@ func (t Tensor) String() string {
 	return toString
 }
 
-func getString(dim int, data Dimension, toString string) string {
-	//+=toString = addSalto(toString)
-	if data.Data == 0 {
-		toString = addSalto(dim, toString)
-		toString += "["
-
-		for _, value := range data.MultiDimensional {
-
-			toString = getString(dim+1, value, toString)
-
-		}
-		toString += "]"
-	} else {
-		toString = addSpace(toString)
-		toString += fmt.Sprintf("%1.2f", data.Data)
-		// 	for _, d := range shape {
-
-	}
-	return toString
-}
 
 func setElementsFromOriginalTensor(dimen int, index *int, data []Dimension, shapeLen int, elements []float32) {
 	rows := len(data)
@@ -235,21 +274,28 @@ func numElements(shape []int64) int64 {
 	}
 	return n
 }
+*/
+// func Reshape(matrix Tensor, newZiseRow, newZisecolum int) [][]float32 {
+// 	rows := matrix.Rows
+// 	colums := matrix.Cols
+// 	if rows*colums != (newZiseRow * newZisecolum) {
+// 		fmt.Println("Nuevo Tamaños %i x /i incompatibles", newZiseRow, newZisecolum)
+// 		return nil
+// 	} else {
+// 		row_index := 0
+// 		column_index := 0
+// 		result := make([][]float32, newZiseRow)
+// 		for i := 0; i < rows; i++ {
+// 			for j := 0; j < colums; j++ {
+// 				result[row_index] = append(result[row_index], matrix[i][j])
+// 				column_index++
+// 				if column_index == newZisecolum {
+// 					column_index = 0
+// 					row_index++
+// 				}
 
-func getInitialElements(elementsIni interface{}) []float32 {
-	elemtString := fmt.Sprint(elementsIni)
-	var elementos []float32
-	element := strings.Split(elemtString, " ")
-	for i := range element {
-		t := strings.Replace(element[i], "[", "", -1)
-		t = strings.Replace(t, "]", "", -1)
-		f, err := (strconv.ParseFloat(t, 2))
-		if err != nil {
-			return nil
-		} else {
-			elementos = append(elementos, float32(f))
-		}
-	}
-	return elementos
-
-}
+// 			}
+// 		}
+// 		return result
+// 	}
+//}

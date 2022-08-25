@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	tensor "hello/src/tensor"
+	"reflect"
 )
 
 func intScanln(n int) ([]int, error) {
@@ -24,7 +25,11 @@ func main() {
 
 	//colums = 4
 	fmt.Println("Ingreso los tamaños para cada dimencion: ")
+	shape := []int64{3, 3, 3}
 	var mytensor tensor.Tensor
+	mytensor.Shape = shape
+	data := [][]int{{2, 2}, {3, 4}}
+	mytensor.DataInit(data)
 	// shape, err := intScanln(numDimen)
 	// if err != nil {
 	// 	fmt.Println(err)
@@ -39,36 +44,53 @@ func main() {
 	//4. IndexSelect([[1, 2], [3, 4]], 1, [0])				[[1], [3]]
 	//5. IndexSelect([[1, 2], [3, 4]], 1, [0, 0])			[[1, 1], [3, 3]]
 	//6. IndexSelect([[1, 2], [3, 4]], 1, [0, 0, 1, 1])	[[1, 1, 2, 2], [3, 3, 4, 4]]
-	shape := []int64{3, 3, 3} //  1. {1,2} -->[[1, 2]]2 repreesnta al ultimo de cada shape y el primero representa el tamoño de index
-	shapes := [][]int{{2, 2}, {3, 4}}
-	fmt.Println("shapes")
-	fmt.Println(shapes)
-	//selecDimen := 0S
-	//indexVector := []int{0, 0, 2}
-	mytensor.Shape = shape
-	mytensor.DataInit()
+	//shape := []int64{3, 3, 3} //  1. {1,2} -->[[1, 2]]2 repreesnta al ultimo de cada shape y el primero representa el tamoño de index
 
-	var mytensorB tensor.Tensor
-	mytensorB.Shape = shape
-	mytensorB.DataInit()
+	// fmt.Println("shapes")
+	// fmt.Println(shapes)
+	// //selecDimen := 0S
+	// //indexVector := []int{0, 0, 2}
+	// mytensor.Shape = shape
+	// mytensor.DataInit()
 
-	mytensor.HadamardProduct(mytensor, mytensorB)
-	//dim := 0
-	//indexVector := []int64{0}
-	//mytensor.IndexSelect(dim, indexVector)
-	//indexVector = []int64{0, 0}
-	//mytensor.IndexSelect(dim, indexVector)
-	//indexVector = []int64{0, 1, 0, 1}
-	//mytensor.IndexSelect(dim, indexVector)
-	//fmt.Scanln(&colums)
+	// var mytensorB tensor.Tensor
+	// mytensorB.Shape = shape
+	// mytensorB.DataInit()
 
-	// matrix := initMatrix(rows, colums)
+	// mytensor.HadamardProduct(mytensor, mytensorB)
+	// //dim := 0
+	// //indexVector := []int64{0}
+	// //mytensor.IndexSelect(dim, indexVector)
+	// //indexVector = []int64{0, 0}
+	// //mytensor.IndexSelect(dim, indexVector)
+	// //indexVector = []int64{0, 1, 0, 1}
+	// //mytensor.IndexSelect(dim, indexVector)
+	// //fmt.Scanln(&colums)
+
+	// // matrix := initMatrix(rows, colums)
 	// fmt.Println("matrix1:", matrix)
 	// matrix = populateRandomValues(matrix)
 	// fmt.Println("matrix1:", matrix)
 	// matrix = tensorReshape(matrix, 8, 2)
 	// fmt.Println("matrix1:", matrix)
+	//	initData(shapes)
 
+}
+
+type Number interface {
+}
+
+func initData(n Number) {
+
+	switch reflect.TypeOf(n).Kind() {
+	case reflect.Slice, reflect.Array:
+		s := reflect.ValueOf(n)
+		for i := 0; i < s.Len(); i++ {
+			fmt.Println(s.Index(i))
+		}
+	}
+
+	fmt.Println("Hadmard Result", reflect.TypeOf(n))
 }
 
 func initMatrix(rows, colums int) [][]float32 {
