@@ -121,6 +121,8 @@ Para ejecutar este proyecto, primero ten una copia local y corre los ejemplos, s
 
 La implementación de las funciones incluye métodos para hacer las respectivas pruebas. Sin embargo, antes de usar los ejemplos, es necesario entender cómo funciona la estructura T.
 
+Ir al archivo src/hello.go y descomentar cada ejemplo que se quiera probaro. o siguiendo la siguiente explicacion realizar las diferentes pruebas.
+
 ### shape
 Es un array de enteros que representa las dimensiones de la estructura T.
  
@@ -171,7 +173,7 @@ Hay 2 formas de suministrarle datos a la estructura T:
 - hadamard
 
    ```sh
-    shape := []int64{2, 2}
+    sshape := []int64{2, 2}
 	dataA := [][]int{{1, 2}, {3, 4}}
 	dataB := [][]int{{2, 2}, {4, 4}}
 	
